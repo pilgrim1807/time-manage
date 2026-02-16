@@ -23,12 +23,12 @@ const Timer = () => {
   }, [timerRunning]);
 
   const handleStart = () => {
-    dispatch(startTimer(activeProject)); // Стартует таймер для проекта
+    dispatch(startTimer(activeProject)); // Старт таймера для проекта
   };
 
   const handleStop = () => {
-    dispatch(stopTimer()); // Стоп
-    // Надо будет добавить логику для сохранения времени в проекте (например, через PUT запрос)
+    dispatch(stopTimer()); // стоп
+    // надо будет добавить логику для сохранения времени в проекте (например, через PUT запрос)
   };
 
   return (
