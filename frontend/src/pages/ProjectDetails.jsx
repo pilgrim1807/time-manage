@@ -1,38 +1,38 @@
-import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { useState } from "react";
-import { api } from "../api/api";
+import React, { useState, useEffect } from "react";
+import api from "../api/api";  // Импорт api как default
 
-export default function ProjectDetails() {
-  const { id } = useParams();
-  const project = useSelector(state =>
-    state.projects.list.find(p => p.id === id)
-  );
+function ProjectDetails() {
+  const [project, setProject] = useState(null);  // стейт для хранения данных о проекте
+  const [error, setError] = useState("");  // стейт для хранения ошибок
 
-  const [name, setName] = useState(project?.name || "");
-  const [description, setDescription] = useState(project?.description || "");
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        const response = await api.get("/projects/1");  // данные по проекту
+        setProject(response.data);
+      } catch (error) {
+        setError("Ошибка при загрузке данных");
+        console.error(error);
+      }
+    };
 
-  if (!project) return <div>Не найдено</div>;
+    fetchProject();
+  }, []);
 
-  const updateProject = async () => {
-    await api.put(`/projects/${id}`, { name, description });
-    alert("Проект обновлен");
-  };
+  if (error) return <div>{error}</div>;  //если ошибки есть она выведиться
 
   return (
     <div>
-      <h2>Редактирование проекта</h2>
-
-      <input
-        value={name}
-        onChange={e => setName(e.target.value)}
-      />
-      <input
-        value={description}
-        onChange={e => setDescription(e.target.value)}
-      />
-
-      <button onClick={updateProject}>Сохранить</button>
+      {project ? (
+        <div>
+          <h1>{project.name}</h1>
+          <p>{project.description}</p>
+        </div>
+      ) : (
+        <p>Загрузка...</p>
+      )}
     </div>
   );
 }
+
+export default ProjectDetails;

@@ -1,18 +1,13 @@
 import axios from 'axios';
 
-export const api = axios.create({
-  baseURL: "http://localhost:5000/api",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+// функция для логина
+export const loginUser = async (email, password) => {
+  const response = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+  return response.data;
+};
 
-// запрос с использованием api:
-export const getProjects = async () => {
-  const response = await api.get("/projects", {
-    headers: {
-      "x-auth-token": localStorage.getItem("authToken"),
-    },
-  });
+// функция для регистрации
+export const registerUser = async (email, password) => {
+  const response = await axios.post('http://localhost:5000/api/auth/register', { email, password });
   return response.data;
 };

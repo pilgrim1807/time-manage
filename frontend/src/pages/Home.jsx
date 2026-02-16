@@ -1,53 +1,42 @@
-import { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProjects, startTimer, stopTimer } from "../features/projectSlice";
-import { Link } from "react-router-dom";
+import { fetchProjects } from "../features/projectSlice";
 
-export default function Home() {
+const Home = () => {
   const dispatch = useDispatch();
-  const { items = [], activeEntry } = useSelector((s) => s.projects || {});
-  const [selected, setSelected] = useState("");
+  const { projects, isLoading, error } = useSelector((state) => state.projects);
 
   useEffect(() => {
-    dispatch(
-      fetchProjects({
-        page: 1,
-        limit: 50,
-        sort: "createdAt",
-        order: "desc",
-      })
-    );
+    dispatch(fetchProjects()); // загрузка проектов
   }, [dispatch]);
 
+  if (isLoading) {
+    return <p>Загрузка...</p>;
+  }
+
+  if (error) {
+    return <p>Ошибка: {error}</p>;
+  }
+
+  // проекты это массив
+  if (!Array.isArray(projects)) {
+    return <p>Проекты не загружены или ошибка в данных.</p>;
+  }
+
   return (
-    <div className="card">
-      <h2>Главная</h2>
-
-      <div className="row">
-        <select value={selected} onChange={(e) => setSelected(e.target.value)}>
-          <option value="">Выбрать проект</option>
-          {items.map((p) => (
-            <option key={p._id} value={p._id}>
-              {p.title}
-            </option>
+    <div>
+      <h1>Проекты</h1>
+      {projects.length > 0 ? (
+        <ul>
+          {projects.map((project) => (
+            <li key={project.id}>{project.name}</li>
           ))}
-        </select>
-
-        {!activeEntry ? (
-          <button
-            disabled={!selected}
-            onClick={() => dispatch(startTimer(selected))}
-          >
-            Старт
-          </button>
-        ) : (
-          <button onClick={() => dispatch(stopTimer())}>Стоп</button>
-        )}
-      </div>
-
-      <div className="hint">
-        Проекты: <Link to="/projects">перейти</Link>
-      </div>
+        </ul>
+      ) : (
+        <p>Нет доступных проектов</p>
+      )}
     </div>
   );
-}
+};
+
+export default Home;

@@ -3,9 +3,9 @@ import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
-// Обновить настройки пользователя
+// настройки пользователя
 router.put("/settings", auth, (req, res) => {
-  // Здесь обновление данных пользователя в базе данных
+  // обновление данных пользователя в базе данных
   res.json({ message: "Настройки обновлены" });
 });
 

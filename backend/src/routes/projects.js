@@ -1,47 +1,21 @@
-import express from "express";
-import auth from "../middleware/auth.js";
+import express from 'express';
+import auth from '../middleware/auth.js'; // Импорт middleware для проверки токена
 
 const router = express.Router();
 
-let projects = []; // Проекты в памяти
-
-// Получить все проекты
+// Пример защищенного маршрута для получения проектов
 router.get("/", auth, (req, res) => {
-  res.json(projects.filter(p => p.userId === req.user.id)); // Фильтруем по пользователю
-});
+  try {
+    const projects = [
+      { id: 1, name: "Проект 1" },
+      { id: 2, name: "Проект 2" },
+    ];
 
-// Создать новый проект
-router.post("/", auth, (req, res) => {
-  const { name, description } = req.body;
-
-  const newProject = {
-    id: Date.now().toString(),
-    userId: req.user.id,
-    name,
-    description,
-    createdAt: new Date(),
-    totalTime: 0
-  };
-
-  projects.push(newProject);
-  res.json(newProject);
-});
-
-// Обновить проект
-router.put("/:id", auth, (req, res) => {
-  const project = projects.find(p => p.id === req.params.id);
-  if (!project) return res.status(404).json({ message: "Проект не найден" });
-
-  project.name = req.body.name ?? project.name;
-  project.description = req.body.description ?? project.description;
-
-  res.json(project);
-});
-
-// Удалить проект
-router.delete("/:id", auth, (req, res) => {
-  projects = projects.filter(p => p.id !== req.params.id);
-  res.json({ message: "Проект удалён" });
+    res.json(projects); 
+  } catch (error) {
+    console.error("Ошибка при получении проектов:", error);
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
 });
 
 export default router;

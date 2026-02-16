@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { createProject } from "../api/api";
 
 export default function CreateProject() {
   const [name, setName] = useState("");
@@ -10,22 +11,10 @@ export default function CreateProject() {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem("token");
+      // проект создаеться через api.js
+      await createProject(name, description);
 
-      const response = await fetch("http://localhost:5000/api/projects", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-auth-token": token,
-        },
-        body: JSON.stringify({ name, description }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Ошибка при создании проекта");
-      }
-
-      // После успешного создания возвращаемся на страницу проектов
+      // после успешного создания пользователь вернеться на страницу проектов
       navigate("/projects");
     } catch (error) {
       console.error("Ошибка создания проекта:", error);

@@ -1,6 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { api } from "../api/api";
+import { createSlice } from '@reduxjs/toolkit';
 
+// исходное состояние
 const initialState = {
   projects: [],
   isLoading: false,
@@ -8,8 +8,9 @@ const initialState = {
   timerRunning: false,
 };
 
+// slice
 const projectsSlice = createSlice({
-  name: "projects",
+  name: 'projects',
   initialState,
   reducers: {
     setProjects(state, action) {
@@ -25,29 +26,38 @@ const projectsSlice = createSlice({
     stopTimer(state) {
       state.activeProject = null;
       state.timerRunning = false;
-    },
-  },
+    }
+  }
 });
 
-export const { setProjects, setLoading, startTimer, stopTimer } =
-  projectsSlice.actions;
+export const { setProjects, setLoading, startTimer, stopTimer } = projectsSlice.actions;
 
 export default projectsSlice.reducer;
 
+// доп логика, например, для загрузки проектов
 export const fetchProjects = () => async (dispatch) => {
   dispatch(setLoading(true));
   try {
-    const response = await api.get("/projects", {
+    const token = localStorage.getItem("authToken");
+
+    const response = await fetch("/api/projects", {
+      method: "GET",
       headers: {
-        "x-auth-token": localStorage.getItem("authToken"),
+        "Accept": "application/json",
+        "x-auth-token": token ?? "",
       },
     });
 
-    dispatch(setProjects(response.data));
+    if (!response.ok) {
+      const bodyText = await response.text().catch(() => "");
+      throw new Error(`HTTP ${response.status}: ${bodyText}`);
+    }
+
+    const data = await response.json();
+    dispatch(setProjects(data));  // данные отправляються в store
   } catch (error) {
-    console.error("Ошибка загрузки проектов:", error);
+    console.error("Ошибка при загрузке проектов:", error);
   } finally {
-    dispatch(setLoading(false));
+    dispatch(setLoading(false));  // конец загрузки
   }
 };
-

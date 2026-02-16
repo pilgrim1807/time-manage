@@ -1,50 +1,24 @@
-import express from "express";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
-const router = express.Router();
+dotenv.config(); // Загружаем переменные окружения
 
-let users = [];
+const auth = (req, res, next) => {
+  // Получаем токен из заголовка Authorization
+  const token = req.header("Authorization")?.replace("Bearer ", "");
 
-// Регистрация
-router.post("/register", async (req, res) => {
-  const { email, password, name } = req.body;
-
-  if (users.find(u => u.email === email)) {
-    return res.status(400).json({ message: "Пользователь уже существует" });
+  if (!token) {
+    return res.status(401).json({ message: "Нет токена" });
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  try {
+    // Проверяем токен с использованием секретного ключа
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // Сохраняем информацию о пользователе в запросе
+    next(); // Продолжаем выполнение
+  } catch (error) {
+    return res.status(401).json({ message: "Невалидный токен" });
+  }
+};
 
-  const newUser = {
-    id: Date.now().toString(),
-    name,
-    email,
-    password: hashedPassword
-  };
-
-  users.push(newUser);
-
-  res.json({ message: "Регистрация успешна" });
-});
-
-// Логин
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
-  const user = users.find(u => u.email === email);
-  if (!user) return res.status(400).json({ message: "Неверные данные" });
-
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) return res.status(400).json({ message: "Неверные данные" });
-
-  const token = jwt.sign(
-    { id: user.id, email: user.email },
-    process.env.JWT_SECRET,
-    { expiresIn: "1h" }
-  );
-
-  res.json({ token });
-});
-
-export default router;
+export default auth;

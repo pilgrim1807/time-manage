@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { api } from "../api/api"; 
 import { useNavigate } from "react-router-dom";
+import { registerUser, loginUser } from "../api/api";  // Импорт loginUser и registerUser как именованные экспорты
 import "./Login.css";
 
 function LoginPage() {
@@ -12,23 +12,26 @@ function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("");
+    setMessage(""); // сбросить сообщение
 
     try {
-      const url = isLogin ? "/auth/login" : "/auth/register";
-      
-      const res = await api.post(url, { email, password }); // Используем api
+      let res;
 
       if (isLogin) {
-        localStorage.setItem("authToken", res.data.token);
-        navigate("/");
+        res = await loginUser(email, password); // вход
       } else {
+        res = await registerUser(email, password); // регистрация
         setMessage("Регистрация прошла успешно! Теперь войдите.");
-        setIsLogin(true);
+        setIsLogin(true); // переключение на форму входа после успешной регистрации
+      }
+
+      if (res?.token) {
+        localStorage.setItem("authToken", res.token); // Сохранение токена в localStorage
+        navigate("/"); // перенаправляемся на главную страницу после входа
       }
     } catch (error) {
       if (error.response?.status === 400) {
-        setMessage("Пользователь не найден или неверный пароль.");
+        setMessage("Неверный email или пароль.");
       } else if (error.response?.status === 409) {
         setMessage("Пользователь уже зарегистрирован.");
       } else {
@@ -75,7 +78,7 @@ function LoginPage() {
         <div className="toggle-link">
           <p onClick={() => setIsLogin(!isLogin)}>
             {isLogin
-              ? "Нет аккаунта? Зарегистрироваться"
+              ? "Нет аккаунта? Зарегистрируйтесь"
               : "Уже есть аккаунт? Войти"}
           </p>
         </div>

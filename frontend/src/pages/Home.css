@@ -1,0 +1,151 @@
+/* Общие стили */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+  color: #333;
+}
+
+.home-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.main-title {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Загрузка */
+.loader {
+  font-size: 1.5rem;
+  color: #007bff;
+  margin-top: 20px;
+}
+
+/* Проекты */
+.projects-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.select-project {
+  margin-bottom: 20px;
+}
+
+.project-select {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.button-group {
+  margin-top: 20px;
+}
+
+.start-btn,
+.stop-btn {
+  padding: 12px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.start-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.start-btn:hover {
+  background-color: #218838;
+}
+
+.stop-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.stop-btn:hover {
+  background-color: #c82333;
+}
+
+/* Ссылка на проекты */
+.projects-link {
+  margin-top: 30px;
+  font-size: 1rem;
+  color: #007bff;
+}
+
+.projects-link a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.projects-link a:hover {
+  text-decoration: underline;
+}
+
+.home-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.projects-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.project-item {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+}
+
+.project-item h3 {
+  margin: 0;
+  font-size: 1.2em;
+}
+
+.project-item p {
+  font-size: 0.9em;
+  color: #555;
+}
+
+.pagination {
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 8px 12px;
+  margin: 0 5px;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  background-color: white;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.pagination button:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.pagination .active {
+  background-color: #007bff;
+  color: white;
+}
